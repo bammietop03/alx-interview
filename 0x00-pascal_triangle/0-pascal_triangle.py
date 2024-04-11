@@ -2,6 +2,8 @@
 """
 0-main
 """
+
+
 def pascal_triangle(n):
     """
     Generate Pascal's triangle of size n
