@@ -9,18 +9,17 @@ needed to result in exactly n H characters in the file.
 
 
 def minOperations(n):
-    if n <= 1:
-        return n
+    """ Minimum Operations """
 
-    min_ops = [0] * (n + 1)
+    if not isinstance(n, int):
+        return 0
 
-    # Iterate from 2 to n
-    for i in range(2, n + 1):
-        # Initialize min_ops[i] to a large value, as it's initially unreachable
-        min_ops[i] = float('inf')
-        # Check all possible factors of i
-        for j in range(1, i):
-            if i % j == 0:
-                min_ops[i] = min(min_ops[i], min_ops[j] + (i // j))
-
-    return min_ops[n]
+    operations = 0
+    iterator = 2
+    while (iterator <= n):
+        if not (n % iterator):
+            n = int(n / iterator)
+            operations += iterator
+            iterator = 1
+        iterator += 1
+    return operations
