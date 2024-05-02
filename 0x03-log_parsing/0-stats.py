@@ -6,20 +6,13 @@ import re
 import signal
 
 
-pattern = r'^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\ ' \
-          r'- \[.*\] "GET /projects/\d+ HTTP/1\.1" \d{3} \d+$'
-count = 0
-total_size = 0
-status_counts = {}
 
-
-def signal_handler(sig, frame):
-    """ Define the signal handler function"""
-    print_stats()
-    sys.exit(0)
-
-
-signal.signal(signal.SIGINT, signal_handler)
+if __name__ == '__main__':
+    pattern = r'^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\ ' \
+              r'- \[.*\] "GET /projects/\d+ HTTP/1\.1" \d{3} \d+$'
+    count = 0
+    total_size = 0
+    status_counts = {}
 
 
 def print_stats():
@@ -48,4 +41,4 @@ try:
 
 except KeyboardInterrupt:
     print_stats()
-    sys.exit()
+    raise
