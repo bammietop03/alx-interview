@@ -1,50 +1,44 @@
 #!/usr/bin/python3
-""" A script that reads stdin line by line and computes metrics"""
-
+"""Log Parser"""
 import sys
-import re
-import signal
-
 
 
 if __name__ == '__main__':
-    pattern = r'^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\ ' \
-              r'- \[.*\] "GET /projects/\d+ HTTP/1\.1" \d{3} \d+$'
-    count = 0
-    total_size = 0
-    status_counts = {}
-
+    file_size = [0]
+    status_codes = {200: 0, 301: 0, 400: 0, 401: 0,
+                    403: 0, 404: 0, 405: 0, 500: 0}
 
     def print_stats():
-        """Prints the statistics"""
-        print(f"File size: {total_size}")
-        for key, value in sorted(status_counts.items()):
-            print(f"{key}: {value}")
+        """ Print statistics """
+        print('File size: {}'.format(file_size[0]))
+        for key in sorted(status_codes.keys()):
+            if status_codes[key]:
+                print('{}: {}'.format(key, status_codes[key]))
 
+    def parse_line(line):
+        """ Checks the line for matches """
+        try:
+            line = line[:-1]
+            word = line.split(' ')
+            # File size is last parameter on stdout
+            file_size[0] += int(word[-1])
+            # Status code comes before file size
+            status_code = int(word[-2])
+            # Move through dictionary of status codes
+            if status_code in status_codes:
+                status_codes[status_code] += 1
+        except BaseException:
+            pass
 
+    count = 1
     try:
         for line in sys.stdin:
-            if re.match(pattern, line):
-                count += 1
-                # parts = line.split()
-                #file_size = int(parts[-1])
-                #status_code = int(parts[-2])
-                line = line[:-1]
-                word = line.split(' ')
-                # File size is last parameter on stdout
-                file_size = int(word[-1])
-                # Status code comes before file size
-                status_code = int(word[-2])
-                total_size += file_size
-                status_counts[status_code] = status_counts.get(status_code, 0)
-                status_counts[status_code] += 1
-
-                if count % 10 == 0:
-                    print_stats()
-                    count = 0
-            else:
-                continue
-
+            parse_line(line)
+            """ print after every 10 lines """
+            if count % 10 == 0:
+                print_stats()
+            count += 1
     except KeyboardInterrupt:
         print_stats()
         raise
+    print_stats()
