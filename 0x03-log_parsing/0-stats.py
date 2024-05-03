@@ -29,12 +29,12 @@ if __name__ == '__main__':
                 # parts = line.split()
                 #file_size = int(parts[-1])
                 #status_code = int(parts[-2])
-				line = line[:-1]
-            	word = line.split(' ')
-            	# File size is last parameter on stdout
-            	file_size = int(word[-1])
-            	# Status code comes before file size
-            	status_code = int(word[-2])
+                line = line[:-1]
+                word = line.split(' ')
+                # File size is last parameter on stdout
+                file_size = int(word[-1])
+                # Status code comes before file size
+                status_code = int(word[-2])
                 total_size += file_size
                 status_counts[status_code] = status_counts.get(status_code, 0)
                 status_counts[status_code] += 1
