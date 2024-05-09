@@ -1,44 +1,44 @@
-#!/usr/bin/env python3
-""" a script that reads stdin line by line and computes metrics """
-
+#!/usr/bin/python3
+"""Log Parser"""
 import sys
-import re
-import signal
 
 
-pattern = r'^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\ - \[.*\] "GET /projects/\d+ HTTP/1\.1" \d{3} \d+$' 
-count = 0
-total_size = 0
-status_code_counts = {}
+if __name__ == '__main__':
+    file_size = [0]
+    status_codes = {200: 0, 301: 0, 400: 0, 401: 0,
+                    403: 0, 404: 0, 405: 0, 500: 0}
 
-def signal_handler(sig, frame):
-    print('Ctrl+C pressed, exiting gracefully...')
-    sys.exit(0)
+    def print_stats():
+        """ Print statistics """
+        print('File size: {}'.format(file_size[0]))
+        for key in sorted(status_codes.keys()):
+            if status_codes[key]:
+                print('{}: {}'.format(key, status_codes[key]))
 
-signal.signal(signal.SIGINT, signal_handler)
+    def parse_line(line):
+        """ Checks the line for matches """
+        try:
+            line = line[:-1]
+            word = line.split(' ')
+            # File size is last parameter on stdout
+            file_size[0] += int(word[-1])
+            # Status code comes before file size
+            status_code = int(word[-2])
+            # Move through dictionary of status codes
+            if status_code in status_codes:
+                status_codes[status_code] += 1
+        except BaseException:
+            pass
 
-def print_stats():
-    print(f"File size: {total_size}")
-    print(sorted(status_code_counts))
-
-
-try:
-    for line in sys.stdin:
-        if re.match(pattern, line):
-            count += 1
-            parts = line.split()
-            file_size = int(parts[-1])
-            status_code = int(parts[-2])
-            total_size += file_size
-            status_code_counts[status_code] = status_code_counts.get(status_code, 0) + 1
-
+    count = 1
+    try:
+        for line in sys.stdin:
+            parse_line(line)
+            """ print after every 10 lines """
             if count % 10 == 0:
                 print_stats()
-                count = 0
-            
-        else:
-            continue
-
-except KeyboardInterrupt:
+            count += 1
+    except KeyboardInterrupt:
+        print_stats()
+        raise
     print_stats()
-    sys.exit()
