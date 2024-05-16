@@ -6,23 +6,14 @@ place N non-attacking queens on an N×N chessboard
 import sys
 
 
-def is_safe(board, row, col):
+def is_safe(board, row, column):
     """
     Check if it's safe to place a queen at the given row and column.
-
-    Parameters:
-    - board (list): List representing the board where board[i] is the column of
-                    the queen in row i.
-    - row (int): The row to check.
-    - col (int): The column to check.
-
-    Returns:
-    - bool: True if it's safe to place the queen, False otherwise.
     """
     for i in range(row):
         if board[i] == col or \
-           board[i] - i == col - row or \
-           board[i] + i == col + row:
+           board[i] - i == column - row or \
+           board[i] + i == column + row:
             return False
     return True
 
@@ -30,13 +21,6 @@ def is_safe(board, row, col):
 def solve_nqueens(n, row, board, solutions):
     """
     Solve the N-Queens problem using backtracking.
-
-    Parameters:
-    - n (int): The size of the board (N x N).
-    - row (int): The current row to place a queen.
-    - board (list): List representing the board where board[i] is the column of
-                    the queen in row i.
-    - solutions (list): List to collect the solutions.
     """
     if row == n:
         solutions.append([[i, board[i]] for i in range(n)])
@@ -50,9 +34,6 @@ def solve_nqueens(n, row, board, solutions):
 def nqueens(N):
     """
     Validate the input, initialize the board, and solve the N-Queens problem.
-
-    Parameters:
-    - N (str): The size of the board as a string.
     """
     if not N.isdigit():
         print("N must be a number")
