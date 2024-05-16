@@ -1,44 +1,40 @@
 #!/usr/bin/python3
-""" The N queens puzzle is the challenge of placing N non-attacking
-queens on an N×N chessboard. Write a program that solves the N queens
-problem."""
+"""
+This module solves the N queens problem. It uses backtracking algorithm to
+place N non-attacking queens on an N×N chessboard
+"""
 import sys
 
 
-def is_safe(board, row, col, N):
-    """Check if there is a queen in the same column"""
+def is_safe(board, row, column):
+    """
+    Check if it's safe to place a queen at the given row and column.
+    """
     for i in range(row):
-        if board[i][col] == 1:
+        if board[i] == column or \
+           board[i] - i == column - row or \
+           board[i] + i == column + row:
             return False
-
-    # Check upper left diagonal
-    for i, j in zip(range(row, -1, -1), range(col, -1, -1)):
-        if board[i][j] == 1:
-            return False
-
-    # Check upper right diagonal
-    for i, j in zip(range(row, -1, -1), range(col, N)):
-        if board[i][j] == 1:
-            return False
-
     return True
 
 
-def solve_nqueens(board, row, N):
-    """Solve nqueens"""
-    if row >= N:
-        print(board)
-        return True
-
-    for col in range(N):
-        if is_safe(board, row, col, N):
-            board[row][col] = 1
-            solve_nqueens(board, row + 1, N)
-            board[row][col] = 0
+def solve_nqueens(n, row, board, solution):
+    """
+    Solve the N-Queens problem using backtracking.
+    """
+    if row == n:
+        solution.append([[i, board[i]] for i in range(n)])
+        return
+    for col in range(n):
+        if is_safe(board, row, col):
+            board[row] = col
+            solve_nqueens(n, row + 1, board, solution)
 
 
 def nqueens(N):
-    """Nqueens"""
+    """
+    Validate the input, initialize the board, and solve the N-Queens problem.
+    """
     if not N.isdigit():
         print("N must be a number")
         sys.exit(1)
@@ -47,12 +43,20 @@ def nqueens(N):
         print("N must be at least 4")
         sys.exit(1)
 
-    board = [[0 for _ in range(N)] for _ in range(N)]
-    solve_nqueens(board, 0, N)
+    solutions = []
+    board = [-1] * N
+    solve_nqueens(N, 0, board, solutions)
+
+    for solution in solutions:
+        print(solution)
 
 
 if __name__ == "__main__":
+    """
+    Entry point of the program. Validates the command-line arguments and
+    calls nqueens function.
+    """
     if len(sys.argv) != 2:
-        print("Usage: ./nqueens N")
+        print("Usage: nqueens N")
         sys.exit(1)
     nqueens(sys.argv[1])
