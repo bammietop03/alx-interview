@@ -11,7 +11,7 @@ def is_safe(board, row, column):
     Check if it's safe to place a queen at the given row and column.
     """
     for i in range(row):
-        if board[i] == col or \
+        if board[i] == column or \
            board[i] - i == column - row or \
            board[i] + i == column + row:
             return False
